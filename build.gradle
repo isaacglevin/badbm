@@ -43,6 +43,7 @@ task fatJar(type: Jar) {
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	sourceSets.main.output.classesDirs
     }
     with jar
 }
