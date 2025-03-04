@@ -1,0 +1,51 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Charting API
+    implementation 'org.jfree:jfreechart:1.0.17'
+    
+    // Persistence API
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.0.0'
+    implementation 'org.eclipse.persistence:eclipselink:3.0.2'
+    
+    // Derby DBMS
+    implementation 'org.apache.derby:derby:10.15.2.0'
+    implementation 'org.apache.derby:derbyshared:10.15.2.0'
+}
+
+// Ensure persistence.xml is copied
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        into sourceSets.main.output.classesDirs.singleFile
+    }
+}
+
+
+// Define the main class for the JAR
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.touro.mco152.bm.App'
+    }
+}
+
+// Task to create an executable JAR with dependencies (Fat JAR)
+task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set('badbm')
+    archiveVersion.set('')
+    manifest {
+        attributes 'Main-Class': 'edu.touro.mco152.bm.App'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+
